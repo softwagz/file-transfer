@@ -12,14 +12,14 @@ COLOR 3F
 @echo que guardes en la carpeta files de este directorio
 @echo -----------------------------------------------------------
 @echo -----------------------------------------------------------
-@echo desde  el navegador de tu telefono, accede a la 
-@echo direccion ip seguido de " : " y el puerto, asi...
+@echo desde  el navegador Google Chrome de tu telefono, accede  
+@echo a la direccion IP seguido de  :  y el numero de puerto.
 @echo -----------------------------------------------------------
-@echo ip.ip.ip.ip : PORT
-@echo -----------------------------------------------------------
+@echo EJEMPLO:
 @echo 192.168.10.0 : 4000
 @echo ___________________________________________________________
-@echo esta es la Ip y el puerto con el que reemplazaras
+@echo La Ip que Usaras en Google Crhome desde tu telefono
+@echo sera la siguiente: 
 @echo ___________________________________________________________
 ipconfig | FINDSTR "Dirección IPv4"
 node .

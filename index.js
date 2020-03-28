@@ -86,12 +86,13 @@ app.get('/', (req, res) => {
 //Ruta de Descargar
 app.post('/file', (req, res) => {
     const { file } = req.body
+    console.log('descargando archivo:', file);
     res.download(__dirname + "/files/" + file);
 })
 
 //ruta de subida
 app.post('/upload', upload.single('archivo') ,(req, res) => {
-    console.log(req.file)
+    console.log('Se ha recibido un archivo nuevo');
     res.redirect('../')
 })
 
