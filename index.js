@@ -5,6 +5,7 @@ const hbs = require('express-handlebars');
 const fs = require('fs');
 const multer = require('multer');
 
+
 //setup Bootstrap
 app.use('/js/jquery.js', express.static(__dirname + '/node_modules/jquery/dist/jquery.min.js'));
 app.use('/css/bootstrap.css', express.static(__dirname + '/node_modules/bootstrap/dist/css/bootstrap.min.css'));
@@ -58,13 +59,10 @@ const upload = multer({storage});
 
 //Ruta Principal
 app.get('/', (req, res) => {
-    /*     if (process.argv.length <= 2) {
-            console.log("Usage: " + __filename + " path/to/directory");
-            process.exit(-1);
-        } */
 
-    var path = __dirname + '/files'  //process.argv[2];
+    var path = __dirname + '/files' ;
     var archivos = [];
+
     fs.readdir(path, function (err, files) {
 
         for (let i = 0; i < files.length; i++) {
@@ -93,7 +91,23 @@ app.post('/file', (req, res) => {
 //ruta de subida
 app.post('/upload', upload.single('archivo') ,(req, res) => {
     console.log('Se ha recibido un archivo nuevo');
-    res.redirect('../')
+    var path = __dirname + '/files';
+    var archivos = [];
+
+    fs.readdir(path, function (err, files) {
+
+        for (let i = 0; i < files.length; i++) {
+            fs.stat(path + "/" + files[i], function (err, stats) {
+                archivos.push(
+                    {
+                        "name": files[i],
+                        "size": stats["size"]
+                    }
+                );
+            });
+        }
+        res.render('selectFile', { archivos });
+    });
 })
 
 
