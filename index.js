@@ -11,6 +11,7 @@ app.use('/js/jquery.js', express.static(__dirname + '/node_modules/jquery/dist/j
 app.use('/css/bootstrap.css', express.static(__dirname + '/node_modules/bootstrap/dist/css/bootstrap.min.css'));
 app.use('/js/bootstrap.js', express.static(__dirname + '/node_modules/bootstrap/dist/js/bootstrap.min.js'));
 app.use('/icon', express.static(__dirname + "/public"));
+app.use("/files", express.static(__dirname + "/files"));
 
 
 //PORT
@@ -41,15 +42,15 @@ app.set('view engine', 'hbs');
 //file Upload
 
 var storage = multer.diskStorage({
-    destination: (req,file,callback)=>{
+    destination: (req, file, callback) => {
         callback(null, './files/')
     },
-    filename:(req,file, callback)=>{
-        callback(null,file.originalname);
+    filename: (req, file, callback) => {
+        callback(null, file.originalname);
     }
 });
 
-const upload = multer({storage});
+const upload = multer({ storage });
 
 
 
@@ -59,26 +60,7 @@ const upload = multer({storage});
 
 //Ruta Principal
 app.get('/', (req, res) => {
-
-    var path = __dirname + '/files' ;
-    var archivos = [];
-
-    fs.readdir(path, function (err, files) {
-
-        for (let i = 0; i < files.length; i++) {
-            fs.stat(path + "/" + files[i], function (err, stats) {
-                archivos.push(
-                    {
-                        "name": files[i],
-                        "size": stats["size"]
-                    }
-                );
-            });
-        }
-        res.render('selectFile', { archivos });
-    });
-
-
+    FileTransfer(req, res);
 });
 
 //Ruta de Descargar
@@ -86,29 +68,102 @@ app.post('/file', (req, res) => {
     const { file } = req.body
     console.log('descargando archivo:', file);
     res.download(__dirname + "/files/" + file);
+
 })
 
 //ruta de subida
-app.post('/upload', upload.single('archivo') ,(req, res) => {
+app.post('/upload', upload.single('archivo'), (req, res) => {
     console.log('Se ha recibido un archivo nuevo');
+    FileTransfer(req,res);
+})
+
+async function FileTransfer(req, res) {
     var path = __dirname + '/files';
     var archivos = [];
+    var jpg = [];
+    var mp3 = [];
+    var mp4 = [];
+    var png = [];
+    var gif = [];
+    var pdf = [];
 
-    fs.readdir(path, function (err, files) {
+    var all = {
+        archivos: archivos,
+        jpg: jpg
+    }
+
+
+    await fs.readdir(path, function (err, files) {
 
         for (let i = 0; i < files.length; i++) {
             fs.stat(path + "/" + files[i], function (err, stats) {
-                archivos.push(
-                    {
-                        "name": files[i],
-                        "size": stats["size"]
-                    }
-                );
+                var nombre = files[i].split(".");
+                var index = nombre.length - 1;
+
+                if (nombre[index] == "mp3") {
+                    mp3.push(
+                        {
+                            "name": files[i],
+                            "size": stats["size"]
+                        }
+                    );
+
+                }
+                if (nombre[index] == "mp4") {
+                    mp4.push(
+                        {
+                            "name": files[i],
+                            "size": stats["size"]
+                        }
+                    );
+                }
+                if (nombre[index] == "jpg") {
+                    jpg.push(
+                        {
+                            "name": files[i],
+                            "size": stats["size"]
+                        }
+                    );
+                }
+                if (nombre[index] == "png") {
+                    png.push(
+                        {
+                            "name": files[i],
+                            "size": stats["size"]
+                        }
+                    );
+                }
+                if (nombre[index] == "gif") {
+                    gif.push(
+                        {
+                            "name": files[i],
+                            "size": stats["size"]
+                        }
+                    );
+                }
+                if (nombre[index] == "pdf") {
+                    pdf.push(
+                        {
+                            "name": files[i],
+                            "size": stats["size"]
+                        }
+                    );
+                }
+                if (nombre[index] != "pdf" && nombre[index] != "mp3" && nombre[index] != "mp4" && nombre[index] != "jpg" && nombre[index] != "png" && nombre[index] != "gif") {
+                    archivos.push(
+                        {
+                            "name": files[i],
+                            "size": stats["size"]
+                        }
+                    );
+                }
+
+
             });
         }
-        res.render('selectFile', { archivos });
+        res.render('selectFile', { archivos, mp3, mp4, jpg, png, pdf, gif });
     });
-})
+}
 
 
 //servidor
